@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Valve Adjustment Form</title>
+  <style>
+    body { font-family: Arial; max-width: 800px; margin: auto; padding: 20px; }
+    h2 { text-align: center; }
+    table, th, td { border: 1px solid #ccc; border-collapse: collapse; }
+    th, td { padding: 8px; }
+    table { width: 100%; margin-top: 20px; }
+    .status-ok { color: green; font-weight: bold; }
+    .status-warn { color: red; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Form Valve Adjustment</h2>
+
+  <form id="valveForm">
+    <label>Tanggal: <input type="date" id="tanggal" required></label><br><br>
+    <label>Nama Mesin: <input type="text" id="mesin" required></label><br><br>
+    <label>Nomor Seri: <input type="text" id="nomorSeri" required></label><br><br>
+    <label>Silinder: <input type="number" id="cylinder" required></label><br><br>
+    <label>Valve Type:
+      <select id="valveType" required>
+        <option value="Intake">Intake</option>
+        <option value="Exhaust">Exhaust</option>
+      </select>
+    </label><br><br>
+    <label>Celah (mm): <input type="number" id="celah" step="0.01" required></label><br><br>
+    <button type="submit">Tambah Data</button>
+  </form>
+
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>Tanggal</th>
+        <th>Mesin</th>
+        <th>Nomor Seri</th>
+        <th>Silinder</th>
+        <th>Valve</th>
+        <th>Celah</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    document.getElementById('valveForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const tanggal = document.getElementById('tanggal').value;
+      const mesin = document.getElementById('mesin').value;
+      const nomorSeri = document.getElementById('nomorSeri').value;
+      const cylinder = document.getElementById('cylinder').value;
+      const valveType = document.getElementById('valveType').value;
+      const celah = parseFloat(document.getElementById('celah').value);
+
+      let status = 'OK';
+      let isSetel = false;
+
+      if (valveType === 'Intake') {
+        if (celah < 0.30 || celah > 0.40) {
+          status = 'Perlu Disetel';
+          isSetel = true;
+        }
+      } else if (valveType === 'Exhaust') {
+        if (celah < 0.50 || celah > 0.60) {
+          status = 'Perlu Disetel';
+          isSetel = true;
+        }
+      }
+
+      const table = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
+      const row = table.insertRow();
+
+      row.innerHTML = `
+        <td>${tanggal}</td>
+        <td>${mesin}</td>
+        <td>${nomorSeri}</td>
+        <td>${cylinder}</td>
+        <td>${valveType}</td>
+        <td>${celah.toFixed(2)}</td>
+        <td class="${isSetel ? 'status-warn' : 'status-ok'}">${status}</td>
+      `;
+
+      document.getElementById('valveForm').reset();
+    });
+  </script>
+</body>
+</html>
